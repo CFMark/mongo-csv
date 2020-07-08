@@ -2,23 +2,33 @@ var db = require("../models");
 var shipStationAPI = require("../apis/shipstationAPI");
 var updateDB = {
 
-  formatDateISO: function (date) {
+  dateDiff: function (initial, final) {
+    //create a recursive function that assesses the date and adds a 
+    var dates = [];
 
-    var fromattedDate = date.toISOString().split("T")[0];
+    function checkDates(init, fin) {
+      // console.log("INIT:"+init);
+      // console.log("FIN:"+fin);
+      if (init.toISOString().split("T")[0] === fin.toISOString().split("T")[0]) {
+        console.log("dates are the same!")
 
-    return fromattedDate
-  },
+      } else {
+        var newInitDay = init.getDate() + 1;
+        var newInitDate = new Date(initial.setDate(newInitDay));
+        console.log("NEW INIT DATE: "+newInitDate)
+        dates.push(newInitDate);
+        checkDates(newInitDate, fin);
 
-  dateDifference: function (earlyDate, lateDate){
-    
-    var early = new Date("2020-08-01");
-    var late = new Date("2020-07-02");
-    var days = late - early;
-    console.log(early);
-    
-    console.log(early.getDate());
-    //console.log(late);
-    //console.log(late.getDate());
+      }
+
+    }
+
+    checkDates(initial, final);
+
+    return dates;
+
+
+
   },
 
   transposeShipments: function (data) {
@@ -53,16 +63,18 @@ var updateDB = {
 
   updateShipments: function (dates) {
 
+    //query the database for the most recent shipment
     db.Shipment.findOne().sort({ "shipDate": -1 }).exec(function (err, doc) {
       if (err) {
         console.log(err);
       }
+
       //console.log(doc);
 
-      var today = new Date().toISOString().split("T")[0];
-      var docDate = doc.shipDate;
-      var early = new Date("2020-07-01");
-      var late = new Date("2020-07-08");
+      // var today = new Date().toISOString().split("T")[0];
+      var today = new Date();
+      var docDate = new Date(doc.shipDate);
+
       var pageSize = 100;
 
       var filter = {
@@ -71,9 +83,14 @@ var updateDB = {
         'pageSize': pageSize
       }
 
+      console.log("DOC DATE: " + docDate);
 
+      console.log("TODAY DATE: " + today);
 
-      console.log(updateDB.dateDifference(early,late));
+      var dates = updateDB.dateDiff(docDate, today);
+
+      console.log(dates);
+
 
       // shipStationAPI.get('shipments', filter, function (data) {
       //   updateDB.transposeShipments(data);
@@ -131,8 +148,6 @@ var updateDB = {
     updateDB.updateShipments();
 
   },
-
-
 
   init: function (res) {
 
