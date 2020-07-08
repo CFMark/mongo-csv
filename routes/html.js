@@ -1,53 +1,45 @@
 var express = require("express");
 var router = express.Router();
 var db = require("../models");
-var shipStationAPI = require("../apis/shipstation");
+var updateDB = require("../db/updateDB");
 
-// router.get("/", function(req, res) {
-//     res.render("index");
+router.get("/", function (req, res) {
+  res.render("index");
+});
+
+
+// router.get("/orders", function (req, res) {
+
+//   var queryObj = { orderId: "563222673" }
+
+//   var q = db.Order.find(queryObj, function (err, docs) {
+//     if (err) {
+//       console.log(err);
+//     }
+//     console.log(docs);
+//     res.render("index", docs);
+//   });
+
 // });
 
-router.get("/", function(req, res) {
-    var date = req.params.date;
+// router.get("/shipments", function (req, res) {
 
-    //if no date has been provided-- use today's date
-    if(date === undefined){
-      //set variable to today's date and remove the time data
-      var today = new Date().toISOString().split("T")[0];
-    }
-  
-    //here we set up a query object to pass to the Shipstation API controller method we imported 
-    var reqParams = {
-      'shipDateStart': `${today}%2000:00:00`,
-      'includeShipmentItems': true,
-    }
-  
-    shipStationAPI.get('/updateShipments', reqParams, function (data) {
+//   var queryObj = { orderId: "563222673" }
 
-        // var shipment =  data.shipments[0];
-        // console.log(shipment.shipmentId);
-        //      db.Shipment.create(shipment)
-        //                 .then(function (resp) {
-        //                     console.log(`Successfully Added: \n${resp}`);
-        //                 })
-        //                 .catch(function (err) {
-        //                    console.log(err);
-        //                 })
-        for (var i = 0; i < data.shipments.length; i++) {
-            var shipment = data.shipments[i]; 
-            console.log(shipment);
+//   var q = db.Shipment.find(queryObj, function (err, docs) {
+//     if (err) {
+//       console.log(err);
+//     }
+//     console.log(docs);
+//     res.render("index", docs);
+//   });
 
-            db.Shipment.create(shipment)
-                        .then(function (resp) {
-                            console.log(`Successfully Added: \n${resp}`);
-                        })
-                        .catch(function (err) {
-                           console.log(err);
-                        })
-        }
-        res.send("index", data);
-        
-    });
+// });
+
+router.get("/updatedb", function (req, res) {
+
+  updateDB.init(res);
+
 });
 
 module.exports = router;
