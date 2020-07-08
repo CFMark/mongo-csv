@@ -9,13 +9,27 @@ var updateDB = {
     function checkDates(init, fin) {
       // console.log("INIT:"+init);
       // console.log("FIN:"+fin);
+
+      //init.setTime(00);
+
+      init.setHours(00);
+      init.setMinutes(00);
+      init.setSeconds(00);
+
+      //fin.setTime(00);
+
+      fin.setHours(00);
+      fin.setMinutes(00);
+      fin.setSeconds(00);
+
       if (init.toISOString().split("T")[0] === fin.toISOString().split("T")[0]) {
         console.log("dates are the same!")
 
       } else {
         var newInitDay = init.getDate() + 1;
         var newInitDate = new Date(initial.setDate(newInitDay));
-        console.log("NEW INIT DATE: "+newInitDate)
+        console.log("NEW INIT DATE: "+newInitDate);
+        console.log("added");
         dates.push(newInitDate);
         checkDates(newInitDate, fin);
 
@@ -26,8 +40,6 @@ var updateDB = {
     checkDates(initial, final);
 
     return dates;
-
-
 
   },
 
@@ -156,7 +168,6 @@ var updateDB = {
     res.render("index");
 
   }
-
 
 }
 
